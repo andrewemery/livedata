@@ -1,0 +1,131 @@
+plugins {
+    id "com.android.library"
+    id "org.jetbrains.kotlin.multiplatform"
+}
+
+group = "com.andrewemery.livedata"
+version = "0.0.1"
+
+android {
+    compileSdkVersion android_compile_sdk_version as int
+    defaultConfig {
+        minSdkVersion android_min_sdk_version as int
+        targetSdkVersion android_target_sdk_version as int
+        versionCode 1
+        versionName "1.0"
+    }
+    packagingOptions {
+        exclude 'LICENSE.txt'
+        exclude 'META-INF/LICENSE'
+        exclude 'META-INF/LICENSE.txt'
+    }
+}
+
+kotlin {
+    jvm()
+    android()
+    iosArm64 { binaries { framework { freeCompilerArgs.add("-Xobjc-generics") } } }
+    iosX64 { binaries { framework { freeCompilerArgs.add("-Xobjc-generics") } } }
+
+    sourceSets {
+
+        commonMain {
+            dependencies {
+                implementation "org.jetbrains.kotlin:kotlin-stdlib-common:$kotlin_version"
+                implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core-common:$coroutines_version"
+            }
+        }
+
+        commonTest {
+            dependencies {
+                implementation "org.jetbrains.kotlin:kotlin-test-common:$kotlin_version"
+                implementation "org.jetbrains.kotlin:kotlin-test-annotations-common:$kotlin_version"
+            }
+        }
+
+        jvmMain {
+            kotlin.srcDirs += "src/stockMain/kotlin"
+            dependsOn commonMain
+            dependencies {
+                implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
+                implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutines_version"
+            }
+        }
+
+        jvmTest {
+            dependsOn commonTest
+            dependencies {
+                implementation "org.jetbrains.kotlin:kotlin-test:$kotlin_version"
+                implementation "org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version"
+            }
+        }
+
+        androidMain {
+            dependsOn commonMain
+            dependencies {
+                implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+                implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutines_version"
+                implementation "androidx.lifecycle:lifecycle-livedata:$android_lifecycle_version"
+            }
+        }
+
+        androidTest {
+            dependsOn jvmTest
+            dependencies {
+                implementation "org.jetbrains.kotlin:kotlin-test:$kotlin_version"
+                implementation "org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version"
+            }
+        }
+
+        iosArm64Main {
+            kotlin.srcDirs += "src/iosMain/kotlin"
+            kotlin.srcDirs += "src/stockMain/kotlin"
+            dependsOn commonMain
+            dependencies {
+                implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core-native:$coroutines_version"
+            }
+        }
+
+        iosArm64Test {
+            kotlin.srcDirs += "src/iosTest/kotlin"
+            dependsOn commonTest
+        }
+
+        iosX64Main {
+            kotlin.srcDirs += "src/iosMain/kotlin"
+            kotlin.srcDirs += "src/stockMain/kotlin"
+            dependsOn commonMain
+            dependencies {
+                implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core-native:$coroutines_version"
+            }
+        }
+
+        iosX64Test {
+            kotlin.srcDirs += "src/iosTest/kotlin"
+            dependsOn commonTest
+        }
+
+        all {
+            languageSettings {
+                useExperimentalAnnotation('kotlin.Experimental')
+            }
+        }
+    }
+}
+
+/**
+ * Execute unit tests on an ios simulator.
+ *
+ * Properties:
+ * device: The type of device to simulate. Default: iPhone 8
+ */
+task iosTest {
+    def device = project.findProperty("device")?.toString() ?: "iPhone 8"
+    dependsOn 'linkDebugTestIosX64'
+    group = JavaBasePlugin.VERIFICATION_GROUP
+    description = "Execute unit tests on ${device} simulator"
+    doLast {
+        def binary = kotlin.targets.iosX64.binaries.getTest('DEBUG')
+        exec { commandLine 'xcrun', 'simctl', 'spawn', device, binary.outputFile }
+    }
+}
