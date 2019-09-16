@@ -1,7 +1,7 @@
 // used to prevent jvm conflict cause by inclusion of extension function
 @file:JvmName("AndroidLiveData")
 
-package com.andrewemery.livedata
+package com.andrewemery.lifecycle
 
 /**
  * Created by Andrew Emery on 2019-06-04.

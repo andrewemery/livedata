@@ -1,4 +1,4 @@
-package com.andrewemery.livedata
+package com.andrewemery.lifecycle
 
 import platform.darwin.dispatch_async
 import platform.darwin.dispatch_get_main_queue
@@ -6,7 +6,7 @@ import platform.darwin.dispatch_get_main_queue
 /**
  * Created by Andrew Emery on 2019-06-04.
  *
- * The implementation of [LiveData] components for Java applications.
+ * The implementation of [LiveData] components for iOS applications.
  */
 actual typealias LifecycleOwner = StockLifecycleOwner // interface
 

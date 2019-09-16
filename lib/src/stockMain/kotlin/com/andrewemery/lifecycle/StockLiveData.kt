@@ -1,4 +1,4 @@
-package com.andrewemery.livedata
+package com.andrewemery.lifecycle
 
 /**
  * Created by Andrew Emery on 2019-05-31.

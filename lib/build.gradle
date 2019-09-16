@@ -65,7 +65,7 @@ kotlin {
             dependencies {
                 implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
                 implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutines_version"
-                implementation "androidx.lifecycle:lifecycle-livedata:$android_lifecycle_version"
+                implementation "androidx.lifecycle:lifecycle-extensions:$android_lifecycle_version"
             }
         }
 
